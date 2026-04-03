@@ -3,7 +3,6 @@ import Papa from 'papaparse'
 import { parseBRDateToTimestamp, parseVehicle } from './helpers'
 import { useNavigate } from 'react-router-dom'
 import type { VehicleIntake } from './features/vehicles/types'
-import { useMemo } from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 const vehicleIntakesURL =
