@@ -68,6 +68,10 @@ export const useVehicleIntakes = () => {
     await db.vehicleIntakes.clear();
   }
 
+  const getIntakesByPlate = (plate: string): VehicleIntake[] => {
+    return groupedByPlate.get(plate) ?? []
+  } 
+
   return {
     intakesCount: allIntakes?.length ?? 0,
     nextToOilChange: nextToOilChange ?? [],
@@ -75,7 +79,8 @@ export const useVehicleIntakes = () => {
     vehiclesLastIntake: vehiclesLastIntake ?? [],
     last7DaysIntakesCount: last7DaysIntakesCount ?? [],
     addVehicleIntake,
-    clearVehicleIntakes
+    clearVehicleIntakes,
+    getIntakesByPlate
   };
 }
 
