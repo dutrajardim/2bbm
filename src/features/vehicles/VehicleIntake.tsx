@@ -1,18 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useVehicleIntakes } from "./hooks/useVehicleIntakes";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function VehicleIntake() {
-  const { id: plate } = useParams<{ id: string }>();
+  const { id: plate } = useParams<{ id: string }>()
   const navigate = useNavigate();
-  const { getIntakesByPlate } = useVehicleIntakes();
+  const { getIntakesByPlate } = useVehicleIntakes()
+
+  const [index, setIndex] = useState(0);
+  const [loadedIndex, setLoadedIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    setLoadedIndex(index)
+  }, [index])
 
   const intakes = useMemo(() => {
     if (!plate) return [];
     return getIntakesByPlate(plate).sort((a, b) => b.datetime - a.datetime);
   }, [plate, getIntakesByPlate]);
 
-  const [index, setIndex] = useState(0);
+
   const current = intakes[index];
 
   const formatDate = (ts: number) =>
@@ -66,11 +73,10 @@ export default function VehicleIntake() {
           <button
             key={i.id}
             onClick={() => setIndex(idx)}
-            className={`px-3 py-2 rounded-xl text-sm whitespace-nowrap border ${
-              idx === index
-                ? "bg-blue-600 text-white"
-                : "bg-white hover:bg-gray-100"
-            }`}
+            className={`px-3 py-2 rounded-xl text-sm whitespace-nowrap border ${idx === index
+              ? "bg-blue-600 text-white"
+              : "bg-white hover:bg-gray-100"
+              }`}
           >
             {formatDate(i.datetime)}
           </button>
@@ -124,18 +130,21 @@ export default function VehicleIntake() {
 
           {photos.length === 0 ? (
             <p className="text-sm text-gray-400">Sem fotos</p>
-          ) : (
+          ) : loadedIndex === index ? (
             <div className="grid grid-cols-2 gap-2">
               {photos.map((img, i) => (
                 <a href={getImageUrl(img)} target="_blank">
-                    <img
-                      key={i}
-                      src={getImageUrl(img)}
-                      className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80"
-                    />
+                  <img
+                    key={i}
+                    src={getImageUrl(img)}
+                    loading="lazy"
+                    className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                  />
                 </a>
               ))}
             </div>
+          ) : (
+            <p className="text-sm text-gray-400">Carregando fotos...</p>
           )}
         </div>
       </div>

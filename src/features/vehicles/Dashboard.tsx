@@ -1,77 +1,45 @@
 import { useVehicleIntakes } from './hooks/useVehicleIntakes'
-import Papa from 'papaparse'
-import { parseBRDateToTimestamp, parseVehicle } from '../../helpers'
 import { useNavigate } from 'react-router-dom'
 import type { VehicleIntake } from './types'
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, ReferenceArea, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, } from 'recharts'
+import { useMemo, useState } from 'react'
 
-const vehicleIntakesURL =
-  'https://docs.google.com/spreadsheets/d/1Cxy54jbBfgDS5w2w3TkmzUWeyVs4A0JulchBAtD54dA/export?format=csv#gid=1703470295'
 
 export default function Dashboard() {
   const navigate = useNavigate()
 
   const {
-    addVehicleIntake,
-    clearVehicleIntakes,
     nextToOilChange,
     latestVehicleIssues,
     intakesCount,
     vehiclesLastIntake,
-    last7DaysIntakesCount
+    last7DaysIntakesCount,
+    last7DaysScatter
   } = useVehicleIntakes()
-
-  const handleImport = async (): Promise<void> => {
-    const response = await fetch(vehicleIntakesURL)
-    const csv = await response.text()
-
-    await clearVehicleIntakes()
-
-    Papa.parse<Record<string, string>>(csv, {
-      header: true,
-      delimiter: ',',
-      skipEmptyLines: true,
-      transformHeader: (header, index) => `${header.normalize("NFD").replace(/[^\w\s]/g, "").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_").toLowerCase()}_${index}`,
-      step: (row) => {
-        const data = row.data
-
-        const datetime = parseBRDateToTimestamp(data.carimbo_de_datahora_0_0)
-        const vehicle = parseVehicle(data.marque_a_viatura_7_7)
-
-        const photos: string | null = data.insira_as_4_fotos_do_veiculo_conforme_exemplo_abaixo_107_107?.trim() || null
-
-        if (vehicle?.plate && !/^(ABT|ABTS|TLP|REF|ASL|ASM|APF|UR|AJ|AMA)/.test(vehicle?.plate)) {
-          addVehicleIntake({
-            datetime,
-            receivingUnit: data.qual_a_sua_unidade_3_3?.trim() || null,
-            prefix: vehicle?.prefix || null,
-            plateNumber: vehicle?.plate || null,
-            odometer: /^\d+$/.test(data.insira_o_hodometro_atual_100_100)
-              ? Number(data.insira_o_hodometro_atual_100_100)
-              : null,
-            kmToNextOilChange: /^\d+$/.test(
-              data.quantos_quilometros_faltam_para_proxima_troca_de_oleo_9_9
-            )
-              ? Number(data.quantos_quilometros_faltam_para_proxima_troca_de_oleo_9_9)
-              : null,
-            description: data.descricao_de_itens_opcional_67_67?.trim() || null,
-            photos
-          })
-        }
-      }
-    })
-  }
 
   const goToVehicle = (plate: string | null) => {
     if (!plate) return
     navigate(`/vehicle-intakes/${plate}`)
   }
+  const days = Array.from(
+    new Set(last7DaysScatter.map((d) => d.date))
+  )
+
+  const [query, setQuery] = useState("")
+  const results = useMemo(() => {
+    if (!query) return [];
+
+    return vehiclesLastIntake.filter(v =>
+      v.plateNumber?.toUpperCase().includes(query) ||
+      v.prefix?.toUpperCase().includes(query)
+    );
+  }, [query, vehiclesLastIntake]);
 
   return (
     <div className="bg-gray-100 p-4 md:p-8 space-y-8">
 
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 relative">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
             Gestão de Viaturas
@@ -81,12 +49,39 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <button
-          onClick={handleImport}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-sm"
-        >
-          Importar dados
-        </button>
+        {/* BUSCA */}
+        <div className="relative w-full md:w-72">
+          <input
+            type="text"
+            placeholder="Buscar placa ou prefixo..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value.toUpperCase())}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && results[0]) {
+                goToVehicle(results[0].plateNumber);
+              }
+            }}
+            className="w-full p-2 border rounded-lg text-sm"
+          />
+
+          {/* AUTOCOMPLETE */}
+          {query && results.length > 0 && (
+            <div className="absolute z-50 bg-white border w-full mt-1 rounded shadow max-h-60 overflow-auto">
+              {results.slice(0, 5).map((v) => (
+                <div
+                  key={v.id}
+                  onClick={() => {
+                    goToVehicle(v.plateNumber);
+                    setQuery("");
+                  }}
+                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                >
+                  🚓 <strong>{v.plateNumber}</strong> ({v.prefix})
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* METRICS */}
@@ -217,28 +212,104 @@ export default function Dashboard() {
         </section>
       </div>
 
-      { /* Last 7days intakes count */}
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3 text-gray-800">
-          Recebimentos (últimos 7 dias)
-        </h2>
+      <div className="flex flex-col md:flex-row gap-4">
 
-        <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
-          <ResponsiveContainer>
-            <BarChart data={last7DaysIntakesCount}>
-              <XAxis dataKey="date" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar
-                dataKey="count"
-                fill="#2563eb"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
+        { /* Last 7days intakes count */}
+        <section className='flex-1'>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">
+            Recebimentos (últimos 7 dias)
+          </h2>
 
+          <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={last7DaysIntakesCount}>
+                <XAxis dataKey="date" angle={-30} textAnchor="end" height={60} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar
+                  dataKey="count"
+                  fill="#2563eb"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className='flex-2'>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">
+            Horário de recebimento (últimos 7 dias)
+          </h2>
+          <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
+            <ResponsiveContainer width="100%" height="100%">
+
+              <ScatterChart width={600} height={300}>
+                <CartesianGrid vertical strokeDasharray="3 3" />
+
+                {days.map((day, i) => {
+                  const nextDay = days[i + 1];
+
+                  if (!nextDay) return null;
+
+                  return (
+                    <ReferenceArea
+                      key={day}
+                      x1={day}
+                      x2={nextDay}
+                      fill={i % 2 === 0 ? "#f8fafc" : "#eef2ff"}
+                      strokeOpacity={0}
+                    />
+                  );
+                })}
+
+                <XAxis
+                  dataKey="date"
+                  name="Dia"
+                  type="category"
+                  ticks={days}
+                  angle={-30}
+                  height={60}
+                  textAnchor="end"
+                />
+
+                <YAxis
+                  dataKey="time"
+                  name="Horário"
+                  domain={[0, 1440]}
+                  reversed
+                  tickFormatter={(value) => {
+                    const h = Math.floor(value / 60);
+                    const m = value % 60;
+                    return `${h.toString().padStart(2, "0")}:${m
+                      .toString()
+                      .padStart(2, "0")}`;
+                  }}
+                />
+
+                <Tooltip
+                  formatter={(value, _name, props) => {
+                    if (typeof value !== "number") return value ?? "";
+
+                    const h = Math.floor(value / 60);
+                    const m = value % 60;
+
+                    const data = props.payload
+
+                    return [
+                      `${h.toString().padStart(2, "0")}:${m
+                        .toString()
+                        .padStart(2, "0")} (${data.prefix})`,
+                      `Horário`
+                    ]
+                  }}
+                />
+
+                <Scatter data={last7DaysScatter} fill="#2563eb" />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
 
       {/* LAST INTakes */}
       <section>

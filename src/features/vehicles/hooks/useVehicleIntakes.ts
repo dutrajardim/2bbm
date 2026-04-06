@@ -1,7 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../../db";
 import type { VehicleIntake } from "../../vehicles/types";
-import { v4 as uuid } from "uuid";
 import { useMemo } from "react";
 
 export const useVehicleIntakes = () => {
@@ -41,6 +40,32 @@ export const useVehicleIntakes = () => {
     return groupByDay(allIntakes)
   }, [allIntakes])
 
+  const last7DaysScatter = useMemo(() => {
+    const result: { date: string, time: number, datetime: number, prefix: string }[] = [];
+
+    const today = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date()
+      d.setDate(today.getDate() - i)
+      const key = d.toLocaleDateString("pt-BR")
+
+      groupedByDay.get(key)?.forEach(intake => {
+        const date = new Date(intake.datetime)
+        const time = date.getHours() * 60 + date.getMinutes();
+        result.push({
+          date: key,
+          time,
+          datetime: intake.datetime,
+          prefix: intake.prefix || intake.plateNumber || "SEM PREFIXO"
+        })
+      })
+
+    }
+
+    return result.sort((a, b) => a.datetime - b.datetime);
+  }, [groupedByDay])
+
   const last7DaysIntakesCount = useMemo(() => {
     const result: { date: string, count: number }[] = [];
 
@@ -49,7 +74,7 @@ export const useVehicleIntakes = () => {
     for (let i = 6; i >= 0; i--) {
       const d = new Date()
       d.setDate(today.getDate() - i)
-      const key = d.toISOString().slice(0, 10);
+      const key = d.toLocaleDateString("pt-BR")
 
       result.push({
         date: key,
@@ -60,17 +85,9 @@ export const useVehicleIntakes = () => {
     return result;
   }, [groupedByDay])
 
-  const addVehicleIntake = async (vehicleIntake: Omit<VehicleIntake, 'id'>) => {
-    await db.vehicleIntakes.add({ ...vehicleIntake, id: uuid() });
-  }
-
-  const clearVehicleIntakes = async () => {
-    await db.vehicleIntakes.clear();
-  }
-
   const getIntakesByPlate = (plate: string): VehicleIntake[] => {
     return groupedByPlate.get(plate) ?? []
-  } 
+  }
 
   return {
     intakesCount: allIntakes?.length ?? 0,
@@ -78,8 +95,7 @@ export const useVehicleIntakes = () => {
     latestVehicleIssues: latestVehicleIssues ?? [],
     vehiclesLastIntake: vehiclesLastIntake ?? [],
     last7DaysIntakesCount: last7DaysIntakesCount ?? [],
-    addVehicleIntake,
-    clearVehicleIntakes,
+    last7DaysScatter: last7DaysScatter ?? [],
     getIntakesByPlate
   };
 }
@@ -155,7 +171,7 @@ function groupByDay(intakes: VehicleIntake[]) {
   for (const intake of intakes) {
     const date = new Date(intake.datetime);
 
-    const key = date.toISOString().slice(0, 10); // "2026-04-03"
+    const key = date.toLocaleDateString("pt-BR")
 
     const group = map.get(key);
 
