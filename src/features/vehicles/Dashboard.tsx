@@ -1,7 +1,7 @@
 import { useVehicleIntakes } from './hooks/useVehicleIntakes'
 import { useNavigate } from 'react-router-dom'
 import type { VehicleIntake } from './types'
-import { Bar, BarChart, CartesianGrid, ReferenceArea, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, } from 'recharts'
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from 'recharts'
 import { useMemo, useState } from 'react'
 
 
@@ -14,16 +14,17 @@ export default function Dashboard() {
     intakesCount,
     vehiclesLastIntake,
     last30DaysIntakesCount,
-    last7DaysScatter
+    // last7DaysScatter
   } = useVehicleIntakes()
 
   const goToVehicle = (plate: string | null) => {
     if (!plate) return
     navigate(`/vehicle-intakes/${plate}`)
   }
-  const days = Array.from(
-    new Set(last7DaysScatter.map((d) => d.date))
-  )
+
+  // const days = Array.from(
+  //  new Set(last7DaysScatter.map((d) => d.date))
+  //)
 
   const [query, setQuery] = useState("")
   const results = useMemo(() => {
