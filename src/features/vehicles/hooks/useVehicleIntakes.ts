@@ -66,12 +66,12 @@ export const useVehicleIntakes = () => {
     return result.sort((a, b) => a.datetime - b.datetime);
   }, [groupedByDay])
 
-  const last7DaysIntakesCount = useMemo(() => {
+  const last30DaysIntakesCount = useMemo(() => {
     const result: { date: string, count: number }[] = [];
 
     const today = new Date();
 
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 29; i >= 0; i--) {
       const d = new Date()
       d.setDate(today.getDate() - i)
       const key = d.toLocaleDateString("pt-BR")
@@ -94,7 +94,7 @@ export const useVehicleIntakes = () => {
     nextToOilChange: nextToOilChange ?? [],
     latestVehicleIssues: latestVehicleIssues ?? [],
     vehiclesLastIntake: vehiclesLastIntake ?? [],
-    last7DaysIntakesCount: last7DaysIntakesCount ?? [],
+    last30DaysIntakesCount: last30DaysIntakesCount ?? [],
     last7DaysScatter: last7DaysScatter ?? [],
     getIntakesByPlate
   };

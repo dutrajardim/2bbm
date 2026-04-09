@@ -13,7 +13,7 @@ export default function Dashboard() {
     latestVehicleIssues,
     intakesCount,
     vehiclesLastIntake,
-    last7DaysIntakesCount,
+    last30DaysIntakesCount,
     last7DaysScatter
   } = useVehicleIntakes()
 
@@ -213,17 +213,17 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="flex flex-col md:flex-row gap-4">
+      { /* <div className="flex flex-col md:flex-row gap-4"> */ }
 
         { /* Last 7days intakes count */}
-        <section className='flex-1'>
+        <section>
           <h2 className="text-lg font-semibold mb-3 text-gray-800">
             Recebimentos (últimos 7 dias)
           </h2>
 
           <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={last7DaysIntakesCount}>
+              <BarChart data={last30DaysIntakesCount}>
                 <XAxis dataKey="date" angle={-30} textAnchor="end" height={60} />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
@@ -235,7 +235,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
         </section>
-
+        { /*
         <section className='flex-2'>
           <h2 className="text-lg font-semibold mb-3 text-gray-800">
             Horário de recebimento (últimos 7 dias)
@@ -310,7 +310,7 @@ export default function Dashboard() {
           </div>
         </section>
       </div>
-
+      */}
       {/* LAST INTakes */}
       <section>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">
