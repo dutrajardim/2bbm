@@ -9,3 +9,14 @@ export interface VehicleIntake {
   description: string | null
   kmToNextOilChange: number | null
 }
+
+export interface VehicleMaintenance {
+  id: string
+  datetime: number
+  type: "REQUISICAO_DE_REPARO" | "ATUALIZACAO_DE_REPARO" | "REPARO_COMPLETO"
+  plateNumber: string
+  reasonDescription: string
+  name: string
+  disabled: boolean
+  bmNumber: string
+}

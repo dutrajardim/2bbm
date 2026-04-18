@@ -19,7 +19,7 @@ export default function Dashboard() {
 
   const goToVehicle = (plate: string | null) => {
     if (!plate) return
-    navigate(`/vehicle-intakes/${plate}`)
+    navigate(`/vehicles/${plate}`)
   }
 
   // const days = Array.from(
@@ -214,29 +214,29 @@ export default function Dashboard() {
       </div>
 
 
-      { /* <div className="flex flex-col md:flex-row gap-4"> */ }
+      { /* <div className="flex flex-col md:flex-row gap-4"> */}
 
-        { /* Last 7days intakes count */}
-        <section>
-          <h2 className="text-lg font-semibold mb-3 text-gray-800">
-            Recebimentos (últimos 7 dias)
-          </h2>
+      { /* Last 7days intakes count */}
+      <section>
+        <h2 className="text-lg font-semibold mb-3 text-gray-800">
+          Recebimentos (últimos 7 dias)
+        </h2>
 
-          <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={last30DaysIntakesCount}>
-                <XAxis dataKey="date" angle={-30} textAnchor="end" height={60} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar
-                  dataKey="count"
-                  fill="#2563eb"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
-        { /*
+        <div className="bg-gray-50 shadow-xs w-full h-64 p-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={last30DaysIntakesCount}>
+              <XAxis dataKey="date" angle={-30} textAnchor="end" height={60} />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar
+                dataKey="count"
+                fill="#2563eb"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+      { /*
         <section className='flex-2'>
           <h2 className="text-lg font-semibold mb-3 text-gray-800">
             Horário de recebimento (últimos 7 dias)

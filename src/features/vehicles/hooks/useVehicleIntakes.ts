@@ -3,6 +3,19 @@ import { db } from "../../../db";
 import type { VehicleIntake } from "../../vehicles/types";
 import { useMemo } from "react";
 
+/**
+ * Custom hook for managing vehicle intake data.
+ * Provides various computed values and utilities for vehicle intakes.
+ *
+ * @returns {Object} An object containing:
+ *   - intakesCount: Number of total intakes
+ *   - nextToOilChange: Array of vehicles close to oil change
+ *   - latestVehicleIssues: Array of vehicles with issues
+ *   - vehiclesLastIntake: Array of latest intakes per vehicle
+ *   - last30DaysIntakesCount: Array of daily intake counts for last 30 days
+ *   - last7DaysScatter: Array of scatter data for last 7 days
+ *   - getIntakesByPlate: Function to get intakes by plate number
+ */
 export const useVehicleIntakes = () => {
 
   // Fetch all intakes ordered by datetime (latest first)
