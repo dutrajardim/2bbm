@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
+import { db } from "../../../db";
 
 interface MaintenanceRepairFormProps {
   plate: string;
@@ -53,6 +55,19 @@ const MaintenanceRepairForm = ({ plate, onClose }: MaintenanceRepairFormProps) =
       if (!response.ok) {
         throw new Error('Erro ao enviar reparo.');
       }
+
+      // Add to IndexedDB for offline availability
+      await db.vehicleMaintenances.add({
+        id: uuid(),
+        datetime: Date.now(),
+        type: repairType as "REPARO_COMPLETO" | "ATUALIZACAO_DE_REPARO",
+        plateNumber: data.plate,
+        reasonDescription: data.description,
+        name: data.name,
+        disabled: repairType === 'ATUALIZACAO_DE_REPARO' ? disabled : false,
+        bmNumber: data.number
+      });
+
       onClose();
     } catch {
       alert('Erro ao enviar reparo.');
@@ -101,10 +116,11 @@ const MaintenanceRepairForm = ({ plate, onClose }: MaintenanceRepairFormProps) =
               <input type="text" className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={bmNumber} onChange={(e) => setBmNumber(e.target.value)} required />
             </div>
             <div className="flex gap-2">
-              <button type="submit" disabled={isSubmitting} className="flex-1 rounded-none bg-warning py-2 font-medium text-warning-foreground hover:opacity-90 disabled:opacity-50">
-                {isSubmitting ? 'Salvando...' : 'Salvar'}
+              <button type="submit" disabled={isSubmitting} className="flex-1 rounded-none bg-warning py-2 font-medium text-warning-foreground hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
+                {isSubmitting && <svg className="w-4 h-4 animate-spin-custom" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"></path></svg>}
+                <span>{isSubmitting ? 'Salvando...' : 'Salvar'}</span>
               </button>
-              <button type="button" onClick={onClose} className="flex-1 rounded-none bg-secondary py-2 font-medium text-secondary-foreground hover:opacity-90">Cancelar</button>
+              <button type="button" onClick={onClose} disabled={isSubmitting} className="flex-1 rounded-none bg-secondary py-2 font-medium text-secondary-foreground hover:opacity-90 disabled:opacity-50">Cancelar</button>
             </div>
           </div>
         </form>
