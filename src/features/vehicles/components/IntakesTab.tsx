@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { useState } from "react";
 import type { VehicleIntake } from "../types";
 
 interface IntakesTabProps {
@@ -53,10 +54,16 @@ const getImageUrl = (url: string) => {
  * @returns Intake tab with details, photos, and chronological navigation.
  */
 const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabProps) => {
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+
   const current = intakes[index];
   const photos = current?.photos
     ? current.photos.split(",").map((p: string) => p.trim())
     : [];
+
+  const handleImageError = (photoUrl: string) => {
+    setFailedImages((prev) => new Set(prev).add(photoUrl));
+  };
 
   return (
     <>
@@ -87,6 +94,10 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
           <div>
             <p className="text-xs text-muted">Data/Hora</p>
             <p className="font-medium">{formatDateTime(current.datetime)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted">Responsável</p>
+            <p className="font-medium">{current.bmName} ({current.bmNumber})</p>
           </div>
           <div>
             <p className="text-xs text-muted">Unidade</p>
@@ -123,16 +134,28 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
             <p className="text-sm text-muted">Sem fotos</p>
           ) : loadedIndex === index ? (
             <div className="grid grid-cols-2 gap-2">
-              {photos.map((img, i) => (
-                <a href={getImageUrl(img)} target="_blank" key={img}>
-                  <img
-                    key={i}
-                    src={getImageUrl(img)}
-                    loading="lazy"
-                    className="h-32 w-full cursor-pointer object-cover hover:opacity-80"
-                  />
-                </a>
-              ))}
+              {photos.map((img) => {
+                const hasFailed = failedImages.has(img);
+                return (
+                  <a href={getImageUrl(img)} target="_blank" key={img}>
+                    {hasFailed ? (
+                      <div className="h-32 w-full bg-destructive/10 border border-destructive/30 flex flex-col items-center justify-center rounded-sm">
+                        <AlertCircle className="size-6 text-destructive mb-1" />
+                        <span className="text-xs text-destructive font-medium text-center px-2">
+                          Erro ao carregar
+                        </span>
+                      </div>
+                    ) : (
+                      <img
+                        src={getImageUrl(img)}
+                        loading="lazy"
+                        className="h-32 w-full cursor-pointer object-cover hover:opacity-80"
+                        onError={() => handleImageError(img)}
+                      />
+                    )}
+                  </a>
+                );
+              })}
             </div>
           ) : (
             <p className="text-sm text-muted">Carregando fotos...</p>

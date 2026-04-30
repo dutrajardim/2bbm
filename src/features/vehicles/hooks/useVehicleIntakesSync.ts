@@ -48,6 +48,7 @@ const importVehicleIntakesData = async () => {
   const csv = await response.text()
 
   await db.vehicleIntakes.clear()
+  let i = 0
 
   Papa.parse<Record<string, string>>(csv, {
     header: true,
@@ -78,7 +79,9 @@ const importVehicleIntakesData = async () => {
             ? Number(data.quantos_quilometros_faltam_para_proxima_troca_de_oleo_9_9)
             : null,
           description: data.descricao_de_itens_opcional_67_67?.trim() || null,
-          photos
+          photos,
+          bmNumber: data.informe_o_numero_bm_6_6?.trim() || null,
+          bmName: data.insira_o_nome_completo_5_5?.trim() || null
         })
       else console.warn(`Skipping invalid vehicle intake record with plate: ${vehicle?.plate} and prefix: ${vehicle?.prefix} (vehicle: ${data.marque_a_viatura_7_7})`)
 

@@ -8,6 +8,8 @@ export interface VehicleIntake {
   photos: string | null
   description: string | null
   kmToNextOilChange: number | null
+  bmNumber: string | null
+  bmName: string | null
 }
 
 export interface VehicleMaintenance {

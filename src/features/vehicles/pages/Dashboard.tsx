@@ -21,7 +21,6 @@ const Dashboard = () => {
     intakesCount,
     vehiclesLastIntake,
     last30DaysIntakesCount,
-    // last7DaysScatter
   } = useVehicleIntakes()
 
   /**
@@ -33,10 +32,6 @@ const Dashboard = () => {
     if (!plate) return
     navigate(`/vehicles/${plate}`)
   }
-
-  // const days = Array.from(
-  //  new Set(last7DaysScatter.map((d) => d.date))
-  //)
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-4 md:p-8">
@@ -97,6 +92,7 @@ const Dashboard = () => {
                   <th className="p-3">Data</th>
                   <th className="p-3">Prefixo</th>
                   <th className="p-3">Placa</th>
+                  <th className="p-3">Responsável</th>
                   <th className="p-3">Descrição</th>
                 </tr>
               </thead>
@@ -115,6 +111,7 @@ const Dashboard = () => {
                     <td className="p-3 text-accent font-medium">
                       {v.plateNumber}
                     </td>
+                    <td className="p-3"><span title={v.bmName || ""}>{v.bmNumber}</span></td>
                     <td className="p-3">{v.description}</td>
                   </tr>
                 ))}
@@ -230,6 +227,7 @@ const Dashboard = () => {
                 <th className="p-3">Placa</th>
                 <th className="p-3">Data</th>
                 <th className="p-3">Unidade</th>
+                <th className="p-3">Responsável</th>
               </tr>
             </thead>
 
@@ -254,6 +252,7 @@ const Dashboard = () => {
                       {new Date(v.datetime).toLocaleString('pt-BR')}
                     </td>
                     <td className="p-3">{v.receivingUnit}</td>
+                    <td className="p-3"><span title={v.bmName || ""}>{v.bmNumber}</span></td>
                   </tr>
                 ))}
             </tbody>
