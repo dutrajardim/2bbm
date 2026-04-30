@@ -48,7 +48,6 @@ const importVehicleIntakesData = async () => {
   const csv = await response.text()
 
   await db.vehicleIntakes.clear()
-  let i = 0
 
   Papa.parse<Record<string, string>>(csv, {
     header: true,
