@@ -13,7 +13,7 @@ const VEHICLE_MAINTENANCE_URL =
   'https://docs.google.com/spreadsheets/d/1y5GyOpMPrN0tQ48FFZ32hMkjhWc-2XmD0GWlV9EUELo/export?format=csv&gid=1046510535'
 
 /**
- * Checks whether the remote vehicle intake CSV source has changed since the last import.
+ * Checks whether the remote vehicle maintenance CSV source has changed since the last import.
  *
  * This is determined by requesting the resource headers and comparing the current
  * Content-Length with the previously saved size in localStorage.
@@ -72,6 +72,12 @@ const importVehicleMaintenancesData = async () => {
   })
 }
 
+/**
+ * Schedules periodic vehicle maintenance synchronization.
+ *
+ * Checks whether the remote spreadsheet changed and, when needed, updates the
+ * local database used by the maintenance history.
+ */
 export const useVehicleMaintenancesSync = () => {
   usePolling(async () => {
     const changed = await hasChangedBySize()
@@ -79,5 +85,5 @@ export const useVehicleMaintenancesSync = () => {
     if (!changed) return
 
     await importVehicleMaintenancesData()
-  }, 5 * 60 * 1000) // A cada 5 minutos
+  }, 5 * 60 * 1000) // Every 5 minutes
 }

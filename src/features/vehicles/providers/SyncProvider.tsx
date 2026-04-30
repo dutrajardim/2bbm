@@ -1,12 +1,15 @@
-import { createContext, useContext } from "react"
+import type { ReactNode } from "react"
 import { useVehicleIntakesSync } from "../hooks/useVehicleIntakesSync"
 import { useVehicleMaintenancesSync } from "../hooks/useVehicleMaintenanceSync"
+import { SyncContext } from "./SyncContext"
 
-const SyncContext = createContext({})
-
-export const useSync = () => useContext(SyncContext)
-
-export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
+/**
+ * Runs vehicle synchronization hooks and provides the sync boundary.
+ *
+ * @param props.children - Route content that depends on synchronized vehicles.
+ * @returns A provider wrapping the synchronized route subtree.
+ */
+export const SyncProvider = ({ children }: { children: ReactNode }) => {
   useVehicleIntakesSync()
   useVehicleMaintenancesSync()
 

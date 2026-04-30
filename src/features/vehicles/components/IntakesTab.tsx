@@ -7,6 +7,12 @@ interface IntakesTabProps {
   onIndexChange: (index: number) => void;
 }
 
+/**
+ * Formats a timestamp as a short Brazilian date.
+ *
+ * @param ts - Timestamp in milliseconds.
+ * @returns Date formatted as DD/MM/YYYY.
+ */
 const formatDate = (ts: number) =>
   new Date(ts).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -14,9 +20,21 @@ const formatDate = (ts: number) =>
     year: "numeric",
   });
 
+/**
+ * Formats a timestamp as Brazilian date and time.
+ *
+ * @param ts - Timestamp in milliseconds.
+ * @returns Localized date and time for pt-BR.
+ */
 const formatDateTime = (ts: number) =>
   new Date(ts).toLocaleString("pt-BR");
 
+/**
+ * Converts shared Google Drive links into direct image URLs.
+ *
+ * @param url - Original photo URL.
+ * @returns Direct URL when the file identifier is found.
+ */
 const getImageUrl = (url: string) => {
   const idMatch = url.match(/id=([^&]+)/);
   const id = idMatch?.[1];
@@ -24,7 +42,16 @@ const getImageUrl = (url: string) => {
   return `https://lh3.googleusercontent.com/d/${id}`;
 };
 
-export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange }: IntakesTabProps) {
+/**
+ * Displays a vehicle's intake history with record navigation.
+ *
+ * @param props.intakes - Intake list for the selected vehicle.
+ * @param props.index - Index of the intake currently displayed.
+ * @param props.loadedIndex - Index allowed to load photos.
+ * @param props.onIndexChange - Updates the selected intake.
+ * @returns Intake tab with details, photos, and chronological navigation.
+ */
+const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabProps) => {
   const current = intakes[index];
   const photos = current?.photos
     ? current.photos.split(",").map((p: string) => p.trim())
@@ -32,7 +59,7 @@ export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange 
 
   return (
     <>
-      {/* Seletor de datas */}
+      {/* Date selector */}
       <div className="flex gap-2 overflow-x-auto pb-2">
         {intakes.map((i, idx) => (
           <button
@@ -52,9 +79,9 @@ export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange 
         {index + 1} / {intakes.length}
       </div>
 
-      {/* Conteúdo */}
+      {/* Content */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Informações */}
+        {/* Information */}
         <div className="bg-white border border-gray-300 p-4 space-y-4">
           <div>
             <p className="text-xs text-gray-500">Data/Hora</p>
@@ -88,7 +115,7 @@ export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange 
           )}
         </div>
 
-        {/* Fotos */}
+        {/* Photos */}
         <div className="bg-white border border-gray-300 p-4">
           <p className="text-xs text-gray-500 mb-2">Fotos</p>
           {photos.length === 0 ? (
@@ -112,7 +139,7 @@ export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange 
         </div>
       </div>
 
-      {/* Navegação */}
+      {/* Navigation */}
       <div className="flex justify-between">
         <button
           onClick={() => onIndexChange(Math.max(index - 1, 0))}
@@ -132,3 +159,5 @@ export default function IntakesTab({ intakes, index, loadedIndex, onIndexChange 
     </>
   );
 }
+
+export default IntakesTab;

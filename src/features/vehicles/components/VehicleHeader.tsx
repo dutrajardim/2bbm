@@ -5,7 +5,14 @@ interface VehicleHeaderProps {
   vehicleStatus: string;
 }
 
-export default function VehicleHeader({ plate, vehicleStatus }: VehicleHeaderProps) {
+/**
+ * Displays the vehicle page header with back navigation and status.
+ *
+ * @param props.plate - Plate of the vehicle being viewed.
+ * @param props.vehicleStatus - Vehicle availability status.
+ * @returns Header for the vehicle detail screen.
+ */
+const VehicleHeader = ({ plate, vehicleStatus }: VehicleHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -24,3 +31,5 @@ export default function VehicleHeader({ plate, vehicleStatus }: VehicleHeaderPro
     </div>
   );
 }
+
+export default VehicleHeader;

@@ -3,7 +3,13 @@ import { db } from "../../../db"
 import type { VehicleMaintenance } from "../types";
 import { useMemo } from "react";
 
-export function useVehicleMaintenanceByPlate(plate: string) {
+/**
+ * Loads and organizes a vehicle's maintenance records by plate.
+ *
+ * @param plate - Plate used to query the local maintenance table.
+ * @returns Vehicle maintenance records, current status, and derived collections.
+ */
+export const useVehicleMaintenanceByPlate = (plate: string) => {
 
   const maintenances = useLiveQuery<VehicleMaintenance[]>(async () => {
     return await db.vehicleMaintenances
@@ -46,7 +52,7 @@ export function useVehicleMaintenanceByPlate(plate: string) {
  * - Uses local date (not UTC) to ensure correct grouping by day in the user's timezone
  * - If you need UTC-based grouping, use `toISOString().slice(0, 10)` instead
  */
-function groupByDay(maintenances: VehicleMaintenance[]) {
+const groupByDay = (maintenances: VehicleMaintenance[]) => {
   const map = new Map<string, VehicleMaintenance[]>();
 
   for (const maintenance of maintenances) {

@@ -3,7 +3,14 @@ interface TabsProps {
   onTabChange: (tab: 'intakes' | 'maintenance') => void;
 }
 
-export default function Tabs({ activeTab, onTabChange }: TabsProps) {
+/**
+ * Renders navigation between vehicle intakes and maintenance records.
+ *
+ * @param props.activeTab - Currently selected tab.
+ * @param props.onTabChange - Updates the active tab.
+ * @returns Tab control for the vehicle page.
+ */
+const Tabs = ({ activeTab, onTabChange }: TabsProps) => {
   return (
     <div className="flex border-b border-gray-300">
       <button
@@ -21,3 +28,5 @@ export default function Tabs({ activeTab, onTabChange }: TabsProps) {
     </div>
   );
 }
+
+export default Tabs;

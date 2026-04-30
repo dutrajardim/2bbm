@@ -1,11 +1,18 @@
-import { useVehicleIntakes } from './hooks/useVehicleIntakes'
+import { useVehicleIntakes } from '../hooks/useVehicleIntakes'
 import { useNavigate } from 'react-router-dom'
-import type { VehicleIntake } from './types'
+import type { VehicleIntake } from '../types'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from 'recharts'
 import { useMemo, useState } from 'react'
 
-
-export default function Dashboard() {
+/**
+ * Displays the main vehicle management dashboard.
+ *
+ * Consolidates metrics, alert lists, plate or prefix search, and charts derived
+ * from locally synchronized intake records.
+ *
+ * @returns Operational vehicle dashboard.
+ */
+const Dashboard = () => {
   const navigate = useNavigate()
 
   const {
@@ -17,6 +24,11 @@ export default function Dashboard() {
     // last7DaysScatter
   } = useVehicleIntakes()
 
+  /**
+   * Navigates to the detail screen when the provided plate is valid.
+   *
+   * @param plate - Selected vehicle plate.
+   */
   const goToVehicle = (plate: string | null) => {
     if (!plate) return
     navigate(`/vehicles/${plate}`)
@@ -50,7 +62,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* BUSCA */}
+        {/* SEARCH */}
         <div className="relative w-full md:w-72">
           <input
             type="text"
@@ -216,7 +228,7 @@ export default function Dashboard() {
 
       { /* <div className="flex flex-col md:flex-row gap-4"> */}
 
-      { /* Last 7days intakes count */}
+      { /* Last 7 days intakes count */}
       <section>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">
           Recebimentos (últimos 7 dias)
@@ -312,7 +324,7 @@ export default function Dashboard() {
         </section>
       </div>
       */}
-      {/* LAST INTakes */}
+      {/* LAST INTAKES */}
       <section>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">
           Últimos recebimentos por VTR
@@ -359,3 +371,5 @@ export default function Dashboard() {
     </div>
   )
 }
+
+export default Dashboard;

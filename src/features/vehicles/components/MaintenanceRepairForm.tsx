@@ -5,7 +5,13 @@ interface MaintenanceRepairFormProps {
   onClose: () => void;
 }
 
-export default function MaintenanceRepairForm({ plate, onClose }: MaintenanceRepairFormProps) {
+/**
+ * Renders the form used to register vehicle maintenance or repair.
+ *
+ * Controls user-filled fields and closes the modal after successfully sending
+ * data to the maintenance endpoint.
+ */
+const MaintenanceRepairForm = ({ plate, onClose }: MaintenanceRepairFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [type, setType] = useState("REPARO_COMPLETO");
   const [name, setName] = useState("");
@@ -13,6 +19,12 @@ export default function MaintenanceRepairForm({ plate, onClose }: MaintenanceRep
   const [reasonDescription, setReasonDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
 
+  /**
+   * Prepares and submits repair data to the maintenance API.
+   *
+   * Formats plate and BM number, chooses the request type based on the selected
+   * status, and controls the loading state during submission.
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -42,7 +54,7 @@ export default function MaintenanceRepairForm({ plate, onClose }: MaintenanceRep
         throw new Error('Erro ao enviar reparo.');
       }
       onClose();
-    } catch (error) {
+    } catch {
       alert('Erro ao enviar reparo.');
     } finally {
       setIsSubmitting(false);
@@ -95,3 +107,5 @@ export default function MaintenanceRepairForm({ plate, onClose }: MaintenanceRep
     </div>
   );
 }
+
+export default MaintenanceRepairForm;

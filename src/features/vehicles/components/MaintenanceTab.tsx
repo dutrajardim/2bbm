@@ -9,6 +9,12 @@ interface MaintenanceTabProps {
   onShowRepairForm: () => void;
 }
 
+/**
+ * Formats a timestamp as a short Brazilian date.
+ *
+ * @param ts - Timestamp in milliseconds.
+ * @returns Date formatted as DD/MM/YYYY.
+ */
 const formatDate = (ts: number) =>
   new Date(ts).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -16,17 +22,34 @@ const formatDate = (ts: number) =>
     year: "numeric",
   });
 
+/**
+ * Formats a timestamp as Brazilian date and time.
+ *
+ * @param ts - Timestamp in milliseconds.
+ * @returns Localized date and time for pt-BR.
+ */
 const formatDateTime = (ts: number) =>
   new Date(ts).toLocaleString("pt-BR");
 
-export default function MaintenanceTab({
+/**
+ * Displays the current status and maintenance history for a vehicle.
+ *
+ * @param props.vehicleStatus - Consolidated vehicle status.
+ * @param props.sortedMaintenances - Ordered maintenance records for display.
+ * @param props.maintenanceIndex - Index of the currently selected maintenance record.
+ * @param props.onMaintenanceIndexChange - Updates the selected maintenance record.
+ * @param props.onShowRequestForm - Opens the request form.
+ * @param props.onShowRepairForm - Opens the repair form.
+ * @returns Maintenance tab with actions and history.
+ */
+const MaintenanceTab = ({
   vehicleStatus,
   sortedMaintenances,
   maintenanceIndex,
   onMaintenanceIndexChange,
   onShowRequestForm,
   onShowRepairForm
-}: MaintenanceTabProps) {
+}: MaintenanceTabProps) => {
   const currentMaintenance = sortedMaintenances?.[maintenanceIndex];
 
   return (
@@ -100,3 +123,5 @@ export default function MaintenanceTab({
     </div>
   );
 }
+
+export default MaintenanceTab;

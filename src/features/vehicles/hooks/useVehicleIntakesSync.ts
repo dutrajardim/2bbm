@@ -87,6 +87,12 @@ const importVehicleIntakesData = async () => {
 }
 
 
+/**
+ * Schedules periodic vehicle intake synchronization.
+ *
+ * Checks whether the remote spreadsheet changed and, when needed, updates the
+ * local database used by query hooks.
+ */
 export const useVehicleIntakesSync = () => {
   usePolling(async () => {
     const changed = await hasChangedBySize()
@@ -94,5 +100,5 @@ export const useVehicleIntakesSync = () => {
     if (!changed) return
 
     await importVehicleIntakesData()
-  }, 5 * 60 * 1000) // A cada 5 minutos
+  }, 5 * 60 * 1000) // Every 5 minutes
 }

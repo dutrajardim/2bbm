@@ -98,6 +98,12 @@ export const useVehicleIntakes = () => {
     return result;
   }, [groupedByDay])
 
+  /**
+   * Retrieves grouped intake records for a vehicle by plate.
+   *
+   * @param plate - Plate used as the grouping key.
+   * @returns Intake records for the plate, or an empty list.
+   */
   const getIntakesByPlate = (plate: string): VehicleIntake[] => {
     return groupedByPlate.get(plate) ?? []
   }
@@ -127,7 +133,7 @@ export const useVehicleIntakes = () => {
  * const grouped = groupByPlate(intakes);
  * const vehicleIntakes = grouped.get("ABC1234");
  */
-function groupByPlate(intakes: VehicleIntake[]): Map<string, VehicleIntake[]> {
+const groupByPlate = (intakes: VehicleIntake[]): Map<string, VehicleIntake[]> => {
   const map = new Map<string, VehicleIntake[]>()
 
   for (const intake of intakes) {
@@ -154,7 +160,7 @@ function groupByPlate(intakes: VehicleIntake[]): Map<string, VehicleIntake[]> {
  * const latest = getLatestIntake(intakes);
  * console.log(latest.datetime);
  */
-function getLatestIntake(intakes: VehicleIntake[]): VehicleIntake {
+const getLatestIntake = (intakes: VehicleIntake[]): VehicleIntake => {
   return intakes.reduce((latest, current) => current.datetime > latest.datetime ? current : latest)
 }
 
@@ -178,7 +184,7 @@ function getLatestIntake(intakes: VehicleIntake[]): VehicleIntake {
  * - Uses local date (not UTC) to ensure correct grouping by day in the user's timezone
  * - If you need UTC-based grouping, use `toISOString().slice(0, 10)` instead
  */
-function groupByDay(intakes: VehicleIntake[]) {
+const groupByDay = (intakes: VehicleIntake[]) => {
   const map = new Map<string, VehicleIntake[]>();
 
   for (const intake of intakes) {

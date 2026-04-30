@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Hook para executar uma função assíncrona de forma recorrente (polling).
+ * Hook for running an asynchronous function repeatedly through polling.
  *
- * Executa imediatamente ao montar o componente e depois em intervalos definidos.
- * Possui proteções para evitar execuções simultâneas e execuções desnecessárias
- * quando a aba do navegador não está visível.
+ * Runs immediately when the component mounts and then at the configured interval.
+ * Includes safeguards against concurrent executions and unnecessary runs when
+ * the browser tab is not visible.
  *
- * @param callback Função assíncrona que será executada periodicamente.
- * @param interval Intervalo entre execuções em milissegundos (default: 5 minutos).
+ * @param callback Asynchronous function that runs periodically.
+ * @param interval Interval between executions in milliseconds (defaults to 5 minutes).
  *
  * @example
  * usePolling(async () => {
@@ -19,10 +19,10 @@ import { useEffect, useRef } from "react";
  * }, 300000)
  *
  * @remarks
- * - Evita chamadas concorrentes usando um lock (`running`)
- * - Não executa quando a aba está em background (`document.hidden`)
- * - Executa imediatamente na montagem (não espera o primeiro intervalo)
- * - Limpa automaticamente o intervalo ao desmontar o componente
+ * - Prevents concurrent calls with a lock (`running`)
+ * - Skips execution when the tab is in the background (`document.hidden`)
+ * - Runs immediately on mount instead of waiting for the first interval
+ * - Automatically clears the interval when the component unmounts
  */
 export const usePolling = (
   callback: () => Promise<void>,
@@ -33,6 +33,9 @@ export const usePolling = (
   useEffect(() => {
     let mounted = true
 
+    /**
+     * Runs the callback while respecting the concurrency lock and tab visibility.
+     */
     const run = async () => {
       if (running.current) return
       if (document.hidden) return

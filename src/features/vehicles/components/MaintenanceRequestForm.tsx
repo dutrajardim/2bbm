@@ -5,13 +5,25 @@ interface MaintenanceRequestFormProps {
   onClose: () => void;
 }
 
-export default function MaintenanceRequestForm({ plate, onClose }: MaintenanceRequestFormProps) {
+/**
+ * Renders the form used to request vehicle maintenance.
+ *
+ * Controls requester, reason, and vehicle availability fields, then sends the
+ * request to the maintenance endpoint.
+ */
+const MaintenanceRequestForm = ({ plate, onClose }: MaintenanceRequestFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState("");
   const [bmNumber, setBmNumber] = useState("");
   const [reasonDescription, setReasonDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
 
+  /**
+   * Prepares and submits the maintenance request to the API.
+   *
+   * Normalizes plate and BM number, builds the payload expected by the endpoint,
+   * and controls the loading state until the request finishes.
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -34,7 +46,7 @@ export default function MaintenanceRequestForm({ plate, onClose }: MaintenanceRe
         throw new Error('Erro ao enviar solicitação.');
       }
       onClose();
-    } catch (error) {
+    } catch {
       alert('Erro ao enviar solicitação.');
     } finally {
       setIsSubmitting(false);
@@ -78,3 +90,5 @@ export default function MaintenanceRequestForm({ plate, onClose }: MaintenanceRe
     </div>
   );
 }
+
+export default MaintenanceRequestForm;
