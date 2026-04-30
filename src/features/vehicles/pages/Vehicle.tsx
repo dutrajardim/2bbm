@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import IntakesTab from "../components/IntakesTab";
 import MaintenanceRepairForm from "../components/MaintenanceRepairForm";
@@ -19,11 +20,14 @@ import { selectVehicleIntakes } from "../utils/intakeSelectors";
  */
 const VehicleNotFoundState = ({ onBack }: { onBack: () => void }) => {
   return (
-    <div className="p-6">
-      <button onClick={onBack} className="text-blue-600">
-        ← Voltar
+    <div className="mx-auto max-w-6xl p-6">
+      <button onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline">
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Voltar
       </button>
-      <p className="mt-4">Nenhum registro encontrado</p>
+      <p className="mt-4 border border-border bg-surface p-4 text-foreground">
+        Nenhum registro encontrado
+      </p>
     </div>
   );
 };
@@ -74,7 +78,7 @@ const Vehicle = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-4">
+    <div className="mx-auto max-w-6xl space-y-5 p-4 md:p-6">
       <VehicleHeader plate={plate} vehicleStatus={vehicleStatus} />
 
       <Tabs activeTab={activeTab} onTabChange={setActiveTab} />

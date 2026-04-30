@@ -1,3 +1,4 @@
+import { CheckCircle2, Wrench } from "lucide-react";
 import type { VehicleMaintenance } from "../types";
 
 interface MaintenanceTabProps {
@@ -53,11 +54,11 @@ const MaintenanceTab = ({
   const currentMaintenance = sortedMaintenances?.[maintenanceIndex];
 
   return (
-    <div className="bg-white border border-gray-300 p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Manutenção</h2>
+    <div className="space-y-4 border border-border bg-surface p-4">
+      <h2 className="text-lg font-semibold text-foreground">Manutenção</h2>
       <div>
-        <p className="text-xs text-gray-500">Status do Veículo</p>
-        <p className={`font-medium ${vehicleStatus === "Disponível" ? "text-green-600" : "text-red-600"}`}>
+        <p className="text-xs text-muted">Status do Veículo</p>
+        <p className={`font-medium ${vehicleStatus === "Disponível" ? "text-success" : "text-danger"}`}>
           {vehicleStatus}
         </p>
       </div>
@@ -66,14 +67,16 @@ const MaintenanceTab = ({
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={onShowRequestForm}
-          className="px-4 py-2 bg-gray-600 text-white hover:bg-gray-700"
+          className="inline-flex items-center gap-2 rounded-none bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
+          <Wrench className="size-4" aria-hidden="true" />
           Solicitar Manutenção
         </button>
         <button
           onClick={onShowRepairForm}
-          className="px-4 py-2 bg-gray-600 text-white hover:bg-gray-700"
+          className="inline-flex items-center gap-2 rounded-none bg-warning px-4 py-2 text-sm font-medium text-warning-foreground hover:opacity-90"
         >
+          <CheckCircle2 className="size-4" aria-hidden="true" />
           Inserir Reparo
         </button>
       </div>
@@ -81,15 +84,15 @@ const MaintenanceTab = ({
       {sortedMaintenances && sortedMaintenances.length > 0 && (
         <>
           <div>
-            <p className="text-xs text-gray-500">Histórico de Manutenções</p>
+            <p className="text-xs text-muted">Histórico de Manutenções</p>
             <div className="flex gap-2 overflow-x-auto pb-2 mt-2">
               {sortedMaintenances.map((m, idx) => (
                 <button
                   key={m.id}
                   onClick={() => onMaintenanceIndexChange(idx)}
-                  className={`px-3 py-2 text-sm whitespace-nowrap border border-gray-300 ${idx === maintenanceIndex
-                    ? "bg-blue-600 text-white"
-                    : "bg-white hover:bg-gray-100"
+                  className={`whitespace-nowrap rounded-none border px-3 py-2 text-sm transition ${idx === maintenanceIndex
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-surface text-foreground hover:bg-surface-muted"
                     }`}
                 >
                   {formatDate(m.datetime)}
@@ -101,19 +104,19 @@ const MaintenanceTab = ({
           {currentMaintenance && (
             <div className="space-y-2">
               <div>
-                <p className="text-xs text-gray-500">Data/Hora</p>
+                <p className="text-xs text-muted">Data/Hora</p>
                 <p className="font-medium">{formatDateTime(currentMaintenance.datetime)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Descrição</p>
+                <p className="text-xs text-muted">Descrição</p>
                 <p className="text-sm">{currentMaintenance.reasonDescription || "Sem descrição"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Tipo</p>
+                <p className="text-xs text-muted">Tipo</p>
                 <p className="font-medium">{currentMaintenance.type || "N/A"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Status</p>
+                <p className="text-xs text-muted">Status</p>
                 <p className="font-medium">{currentMaintenance.disabled ? "Indisponível" : "Disponível"}</p>
               </div>
             </div>

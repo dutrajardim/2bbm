@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { VehicleIntake } from "../types";
 
 interface IntakesTabProps {
@@ -65,9 +66,9 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
           <button
             key={i.id}
             onClick={() => onIndexChange(idx)}
-            className={`px-3 py-2 text-sm whitespace-nowrap border border-gray-300 ${idx === index
-              ? "bg-blue-600 text-white"
-              : "bg-white hover:bg-gray-100"
+            className={`whitespace-nowrap rounded-none border px-3 py-2 text-sm transition ${idx === index
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border bg-surface text-foreground hover:bg-surface-muted"
               }`}
           >
             {formatDate(i.datetime)}
@@ -75,39 +76,39 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
         ))}
       </div>
 
-      <div className="text-sm text-gray-500 text-right">
+      <div className="text-right text-sm text-muted">
         {index + 1} / {intakes.length}
       </div>
 
       {/* Content */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Information */}
-        <div className="bg-white border border-gray-300 p-4 space-y-4">
+        <div className="space-y-4 border border-border bg-surface p-4">
           <div>
-            <p className="text-xs text-gray-500">Data/Hora</p>
+            <p className="text-xs text-muted">Data/Hora</p>
             <p className="font-medium">{formatDateTime(current.datetime)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Unidade</p>
+            <p className="text-xs text-muted">Unidade</p>
             <p className="font-medium">{current.receivingUnit}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Prefixo</p>
+            <p className="text-xs text-muted">Prefixo</p>
             <p className="font-medium">{current.prefix}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Odômetro</p>
+            <p className="text-xs text-muted">Odômetro</p>
             <p className="font-medium">{current.odometer} km</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Troca de óleo</p>
+            <p className="text-xs text-muted">Troca de óleo</p>
             <p className="font-medium">
               {current.kmToNextOilChange ?? "-"}
             </p>
           </div>
           {current.description && (
             <div>
-              <p className="text-xs text-gray-500">Observações</p>
+              <p className="text-xs text-muted">Observações</p>
               <p className="text-sm leading-relaxed">
                 {current.description}
               </p>
@@ -116,10 +117,10 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
         </div>
 
         {/* Photos */}
-        <div className="bg-white border border-gray-300 p-4">
-          <p className="text-xs text-gray-500 mb-2">Fotos</p>
+        <div className="border border-border bg-surface p-4">
+          <p className="mb-2 text-xs text-muted">Fotos</p>
           {photos.length === 0 ? (
-            <p className="text-sm text-gray-400">Sem fotos</p>
+            <p className="text-sm text-muted">Sem fotos</p>
           ) : loadedIndex === index ? (
             <div className="grid grid-cols-2 gap-2">
               {photos.map((img, i) => (
@@ -128,13 +129,13 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
                     key={i}
                     src={getImageUrl(img)}
                     loading="lazy"
-                    className="w-full h-32 object-cover cursor-pointer hover:opacity-80"
+                    className="h-32 w-full cursor-pointer object-cover hover:opacity-80"
                   />
                 </a>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400">Carregando fotos...</p>
+            <p className="text-sm text-muted">Carregando fotos...</p>
           )}
         </div>
       </div>
@@ -144,16 +145,18 @@ const IntakesTab = ({ intakes, index, loadedIndex, onIndexChange }: IntakesTabPr
         <button
           onClick={() => onIndexChange(Math.max(index - 1, 0))}
           disabled={index === 0}
-          className="px-4 py-2 border border-gray-300 disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-none border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-surface-muted disabled:opacity-40"
         >
-          ← Mais recente
+          <ChevronLeft className="size-4" aria-hidden="true" />
+          Mais recente
         </button>
         <button
           onClick={() => onIndexChange(Math.min(index + 1, intakes.length - 1))}
           disabled={index === intakes.length - 1}
-          className="px-4 py-2 border border-gray-300 disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-none border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-surface-muted disabled:opacity-40"
         >
-          Mais antigo →
+          Mais antigo
+          <ChevronRight className="size-4" aria-hidden="true" />
         </button>
       </div>
     </>

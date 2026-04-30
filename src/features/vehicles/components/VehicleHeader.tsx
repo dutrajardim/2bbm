@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface VehicleHeaderProps {
@@ -16,15 +17,16 @@ const VehicleHeader = ({ plate, vehicleStatus }: VehicleHeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+    <div className="border border-border bg-surface p-4 md:flex md:items-center md:justify-between">
       <button
         onClick={() => navigate(-1)}
-        className="text-sm text-blue-600 hover:underline"
+        className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"
       >
-        ← Voltar
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Voltar
       </button>
-      <h1 className="text-lg md:text-xl font-semibold text-center md:text-left">
-        {plate} - <span className={`font-medium ${vehicleStatus === "Disponível" ? "text-green-600" : "text-red-600"}`}>
+      <h1 className="mt-3 text-lg font-semibold text-foreground md:mt-0 md:text-xl">
+        {plate} - <span className={`font-medium ${vehicleStatus === "Disponível" ? "text-success" : "text-danger"}`}>
           {vehicleStatus}
         </span>
       </h1>

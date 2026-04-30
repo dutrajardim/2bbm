@@ -55,34 +55,39 @@ const MaintenanceRequestForm = ({ plate, onClose }: MaintenanceRequestFormProps)
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-      <div className="bg-white p-6 max-w-md w-full border border-gray-300">
-        <h3 className="text-lg font-semibold mb-4">Solicitar Manutenção</h3>
+      <div className="w-full max-w-md border border-border bg-surface p-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <h3 className="text-lg font-semibold text-foreground">Solicitar Manutenção</h3>
+          <span className="border border-warning bg-warning/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-warning">
+            Teste - ainda não funcional
+          </span>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Motivo</label>
-              <textarea className="w-full border border-gray-300 p-2" rows={3} value={reasonDescription} onChange={(e) => setReasonDescription(e.target.value)} required></textarea>
+              <label className="block text-sm font-medium text-foreground">Motivo</label>
+              <textarea className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" rows={3} value={reasonDescription} onChange={(e) => setReasonDescription(e.target.value)} required></textarea>
             </div>
             <div>
-              <label className="block text-sm font-medium">Nome do Responsável</label>
-              <input type="text" className="w-full border border-gray-300 p-2" value={name} onChange={(e) => setName(e.target.value)} required />
+              <label className="block text-sm font-medium text-foreground">Nome do Responsável</label>
+              <input type="text" className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium">Número BM</label>
-              <input type="text" className="w-full border border-gray-300 p-2" value={bmNumber} onChange={(e) => setBmNumber(e.target.value)} required />
+              <label className="block text-sm font-medium text-foreground">Número BM</label>
+              <input type="text" className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={bmNumber} onChange={(e) => setBmNumber(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium">Veículo ficará indisponível?</label>
-              <select className="w-full border border-gray-300 p-2" value={disabled ? "true" : "false"} onChange={(e) => setDisabled(e.target.value === "true")}>
+              <label className="block text-sm font-medium text-foreground">Veículo ficará indisponível?</label>
+              <select className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={disabled ? "true" : "false"} onChange={(e) => setDisabled(e.target.value === "true")}>
                 <option value="false">Não</option>
                 <option value="true">Sim</option>
               </select>
             </div>
             <div className="flex gap-2">
-              <button type="submit" disabled={isSubmitting} className="flex-1 bg-green-600 text-white py-2 hover:bg-green-700 disabled:opacity-50">
+              <button type="submit" disabled={isSubmitting} className="flex-1 rounded-none bg-success py-2 font-medium text-success-foreground hover:opacity-90 disabled:opacity-50">
                 {isSubmitting ? 'Enviando...' : 'Enviar'}
               </button>
-              <button type="button" onClick={onClose} className="flex-1 bg-gray-300 py-2 hover:bg-gray-400">Cancelar</button>
+              <button type="button" onClick={onClose} className="flex-1 rounded-none bg-secondary py-2 font-medium text-secondary-foreground hover:opacity-90">Cancelar</button>
             </div>
           </div>
         </form>

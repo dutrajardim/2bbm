@@ -63,43 +63,48 @@ const MaintenanceRepairForm = ({ plate, onClose }: MaintenanceRepairFormProps) =
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-      <div className="bg-white p-6 max-w-md w-full border border-gray-300">
-        <h3 className="text-lg font-semibold mb-4">Inserir Reparo</h3>
+      <div className="w-full max-w-md border border-border bg-surface p-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <h3 className="text-lg font-semibold text-foreground">Inserir Reparo</h3>
+          <span className="border border-warning bg-warning/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-warning">
+            Teste - ainda não funcional
+          </span>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Status do Reparo</label>
-              <select className="w-full border border-gray-300 p-2" value={type} onChange={(e) => setType(e.target.value)} required>
+              <label className="block text-sm font-medium text-foreground">Status do Reparo</label>
+              <select className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={type} onChange={(e) => setType(e.target.value)} required>
                 <option value="REPARO_COMPLETO">Completo</option>
                 <option value="ATUALIZACAO_DE_REPARO">Parcial</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium">Descrição da Manutenção Realizada</label>
-              <textarea className="w-full border border-gray-300 p-2" rows={3} value={reasonDescription} onChange={(e) => setReasonDescription(e.target.value)} required></textarea>
+              <label className="block text-sm font-medium text-foreground">Descrição da Manutenção Realizada</label>
+              <textarea className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" rows={3} value={reasonDescription} onChange={(e) => setReasonDescription(e.target.value)} required></textarea>
             </div>
             {type === 'ATUALIZACAO_DE_REPARO' && (
               <div>
-                <label className="block text-sm font-medium">Veículo Disponível?</label>
-                <select className="w-full border border-gray-300 p-2" value={disabled ? "true" : "false"} onChange={(e) => setDisabled(e.target.value === "true")}>
+                <label className="block text-sm font-medium text-foreground">Veículo Disponível?</label>
+                <select className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={disabled ? "true" : "false"} onChange={(e) => setDisabled(e.target.value === "true")}>
                   <option value="false">Sim</option>
                   <option value="true">Não</option>
                 </select>
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium">Nome do Responsável</label>
-              <input type="text" className="w-full border border-gray-300 p-2" value={name} onChange={(e) => setName(e.target.value)} required />
+              <label className="block text-sm font-medium text-foreground">Nome do Responsável</label>
+              <input type="text" className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium">Número BM</label>
-              <input type="text" className="w-full border border-gray-300 p-2" value={bmNumber} onChange={(e) => setBmNumber(e.target.value)} required />
+              <label className="block text-sm font-medium text-foreground">Número BM</label>
+              <input type="text" className="mt-1 w-full rounded-none border border-border bg-surface p-2 text-foreground outline-none focus:border-accent" value={bmNumber} onChange={(e) => setBmNumber(e.target.value)} required />
             </div>
             <div className="flex gap-2">
-              <button type="submit" disabled={isSubmitting} className="flex-1 bg-orange-600 text-white py-2 hover:bg-orange-700 disabled:opacity-50">
+              <button type="submit" disabled={isSubmitting} className="flex-1 rounded-none bg-warning py-2 font-medium text-warning-foreground hover:opacity-90 disabled:opacity-50">
                 {isSubmitting ? 'Salvando...' : 'Salvar'}
               </button>
-              <button type="button" onClick={onClose} className="flex-1 bg-gray-300 py-2 hover:bg-gray-400">Cancelar</button>
+              <button type="button" onClick={onClose} className="flex-1 rounded-none bg-secondary py-2 font-medium text-secondary-foreground hover:opacity-90">Cancelar</button>
             </div>
           </div>
         </form>
