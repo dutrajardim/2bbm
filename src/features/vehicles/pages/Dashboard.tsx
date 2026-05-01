@@ -190,11 +190,11 @@ const Dashboard = () => {
       </div>
 
 
-      { /* Last 7 days intakes count */}
+      { /* Last 30 days intakes count */}
       <section>
         <h2 className="mb-3 inline-flex items-center gap-2 text-lg font-semibold text-foreground">
           <BarChart3 className="size-5 text-accent" aria-hidden="true" />
-          Recebimentos (últimos 7 dias)
+          Recebimentos (últimos 30 dias)
         </h2>
 
         <div className="h-64 w-full border border-border bg-surface p-5">

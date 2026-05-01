@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Car, Home, Moon, Search, Sun, Calendar } from "lucide-react";
+import { Car, Home, Search, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme, type ThemeMode } from "../../../providers/themeContext";
 import { useVehicleIntakes } from "../hooks/useVehicleIntakes";
