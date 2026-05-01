@@ -22,3 +22,14 @@ export interface VehicleMaintenance {
   disabled: boolean
   bmNumber: string
 }
+
+export interface Vehicle {
+  id: string
+  plateNumber: string
+  prefix: string
+  status: "DISPONÍVEL" | "BAIXADA" | "DESCARGA" | "MANUTENÇÃO" | "TRANSFERIDA"
+  category: "SOCORRO" | "RESGATE" | "SALVAMENTO" | "ADMINISTRATIVO" | "NÃO POSSUI"
+  location: string
+  model: string
+  cardNumber: string
+}

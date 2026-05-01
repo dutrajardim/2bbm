@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AppShell from "./features/vehicles/components/AppShell";
 import Dashboard from "./features/vehicles/pages/Dashboard"
 import Vehicle from "./features/vehicles/pages/Vehicle";
+import DailyIntake from "./features/vehicles/pages/DailyIntake";
 import { SyncProvider } from "./features/vehicles/providers/SyncProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
@@ -17,6 +18,7 @@ const AppRoutes = () => {
         <AppShell>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/vehicles/daily-intake" element={<DailyIntake />} />
             <Route path="/vehicles/:id" element={<Vehicle />} />
             <Route path="*" element={<Dashboard />} />
           </Routes>

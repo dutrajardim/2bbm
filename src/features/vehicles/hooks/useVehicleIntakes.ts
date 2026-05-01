@@ -53,32 +53,6 @@ export const useVehicleIntakes = () => {
     return groupByDay(allIntakes)
   }, [allIntakes])
 
-  const last7DaysScatter = useMemo(() => {
-    const result: { date: string, time: number, datetime: number, prefix: string }[] = [];
-
-    const today = new Date();
-
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date()
-      d.setDate(today.getDate() - i)
-      const key = d.toLocaleDateString("pt-BR")
-
-      groupedByDay.get(key)?.forEach(intake => {
-        const date = new Date(intake.datetime)
-        const time = date.getHours() * 60 + date.getMinutes();
-        result.push({
-          date: key,
-          time,
-          datetime: intake.datetime,
-          prefix: intake.prefix || intake.plateNumber || "SEM PREFIXO"
-        })
-      })
-
-    }
-
-    return result.sort((a, b) => a.datetime - b.datetime);
-  }, [groupedByDay])
-
   const last30DaysIntakesCount = useMemo(() => {
     const result: { date: string, count: number }[] = [];
 
@@ -114,7 +88,6 @@ export const useVehicleIntakes = () => {
     latestVehicleIssues: latestVehicleIssues ?? [],
     vehiclesLastIntake: vehiclesLastIntake ?? [],
     last30DaysIntakesCount: last30DaysIntakesCount ?? [],
-    last7DaysScatter: last7DaysScatter ?? [],
     getIntakesByPlate
   };
 }

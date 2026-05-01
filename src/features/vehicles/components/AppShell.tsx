@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Car, Home, Monitor, Moon, Search, Sun } from "lucide-react";
+import { Car, Home, Moon, Search, Sun, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme, type ThemeMode } from "../../../providers/themeContext";
 import { useVehicleIntakes } from "../hooks/useVehicleIntakes";
@@ -9,12 +9,6 @@ const themeOptions: { value: ThemeMode; label: string }[] = [
   { value: "light", label: "Claro" },
   { value: "dark", label: "Escuro" },
 ];
-
-const themeIcons = {
-  system: Monitor,
-  light: Sun,
-  dark: Moon,
-};
 
 /**
  * Wraps vehicle pages with shared navigation, search, and theme controls.
@@ -27,7 +21,6 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   const { theme, setTheme } = useTheme();
   const { vehiclesLastIntake } = useVehicleIntakes();
   const [query, setQuery] = useState("");
-  const ThemeIcon = themeIcons[theme];
 
   const results = useMemo(() => {
     if (!query) return [];
@@ -56,15 +49,28 @@ const AppShell = ({ children }: { children: ReactNode }) => {
     <div className="min-h-screen bg-background text-foreground transition-colors">
       <header className="sticky top-0 z-50 border-b border-border bg-surface/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6">
-          <div className="flex items-center justify-between gap-3">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-base font-semibold tracking-tight text-foreground"
-            >
-              <Home className="size-4 text-muted" aria-hidden="true" />
-              Gestão de Viaturas
-            </Link>
-          </div>
+          <nav className="flex items-center gap-1">
+            <ul className="flex items-center gap-1">
+              <li>
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-foreground border border-border hover:bg-surface-muted transition"
+                >
+                  <Home className="size-4" aria-hidden="true" />
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/vehicles/daily-intake"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-foreground border border-border hover:bg-surface-muted transition"
+                >
+                  <Calendar className="size-4" aria-hidden="true" />
+                  Recebimento do Dia
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
           <div className="flex flex-col gap-2 md:flex-row md:items-center">
             <div className="relative w-full md:w-80">
@@ -105,21 +111,18 @@ const AppShell = ({ children }: { children: ReactNode }) => {
             </div>
 
             <label className="sr-only" htmlFor="theme-select">Tema</label>
-            <div className="relative">
-              <ThemeIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
-              <select
-                id="theme-select"
-                value={theme}
-                onChange={(event) => setTheme(event.target.value as ThemeMode)}
-                className="h-10 w-full rounded-none border border-border bg-surface pl-9 pr-3 text-sm font-medium text-foreground outline-none transition focus:border-accent md:w-auto"
-              >
-                {themeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    Tema: {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              id="theme-select"
+              value={theme}
+              onChange={(event) => setTheme(event.target.value as ThemeMode)}
+              className="h-9 rounded-none border border-border bg-surface px-2 text-xs font-medium text-foreground outline-none transition focus:border-accent"
+            >
+              {themeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </header>

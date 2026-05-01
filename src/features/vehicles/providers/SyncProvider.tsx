@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { useVehicleIntakesSync } from "../hooks/useVehicleIntakesSync"
 import { useVehicleMaintenancesSync } from "../hooks/useVehicleMaintenanceSync"
+import { useVehiclesSync } from "../hooks/useVehiclesSync"
 import { SyncContext } from "./SyncContext"
 
 /**
@@ -10,6 +11,7 @@ import { SyncContext } from "./SyncContext"
  * @returns A provider wrapping the synchronized route subtree.
  */
 export const SyncProvider = ({ children }: { children: ReactNode }) => {
+  useVehiclesSync()
   useVehicleIntakesSync()
   useVehicleMaintenancesSync()
 
