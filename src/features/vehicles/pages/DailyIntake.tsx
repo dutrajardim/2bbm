@@ -3,6 +3,7 @@ import { useVehicles } from '../hooks/useVehicles'
 import { useMemo } from 'react'
 import { AlertTriangle, ClipboardList, TrendingDown, TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { IntakeSyncStatus } from '../components/IntakeSyncStatus'
 
 /**
  * Displays the daily intake dashboard.
@@ -80,6 +81,9 @@ const DailyIntake = () => {
           </p>
         </div>
       </div>
+
+      {/* SYNC STATUS */}
+      <IntakeSyncStatus />
 
       {/* METRICS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

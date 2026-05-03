@@ -21,7 +21,7 @@ const VEHICLE_INTAKES_URL =
  * @returns Promise resolving to true when the source has changed or no saved size exists,
  *   otherwise false.
  */
-const hasChangedBySize = async (): Promise<boolean> => {
+export const hasChangedBySize = async (): Promise<boolean> => {
   const res = await fetch(VEHICLE_INTAKES_URL, { method: 'HEAD' })
   const size = res.headers.get('Content-Length')
 
@@ -43,7 +43,7 @@ const hasChangedBySize = async (): Promise<boolean> => {
  * This clears the existing `vehicleIntakes` table before parsing and inserting each
  * valid row from the downloaded CSV. Invalid records are skipped and logged.
  */
-const importVehicleIntakesData = async () => {
+export const importVehicleIntakesData = async () => {
   const response = await fetch(VEHICLE_INTAKES_URL)
   const csv = await response.text()
 
@@ -99,8 +99,12 @@ export const useVehicleIntakesSync = () => {
   usePolling(async () => {
     const changed = await hasChangedBySize()
     console.log(changed ? "Vehicle intakes have changed, syncing..." : "No changes detected in vehicle intakes.")
-    if (!changed) return
 
-    await importVehicleIntakesData()
+    if (changed) {
+      await importVehicleIntakesData()
+    }
+
+    // Always dispatch event to notify that sync check completed (whether data changed or not)
+    window.dispatchEvent(new CustomEvent('vehicle-intakes-synced'))
   }, 5 * 60 * 1000) // Every 5 minutes
 }
