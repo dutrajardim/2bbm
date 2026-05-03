@@ -82,43 +82,42 @@ const DailyIntake = () => {
         </div>
       </div>
 
-      {/* SYNC STATUS */}
       <IntakeSyncStatus />
-
-      {/* METRICS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted">Recebimentos hoje</p>
-            <TrendingUp className="size-5 text-success" aria-hidden="true" />
+      <section className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="border border-border bg-surface p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-muted">Recebimentos hoje</p>
+              <TrendingUp className="size-5 text-success" aria-hidden="true" />
+            </div>
+            <p className="mt-2 text-3xl font-semibold text-success">{todayIntakes.length}</p>
           </div>
-          <p className="mt-2 text-3xl font-semibold text-success">{todayIntakes.length}</p>
-        </div>
 
-        <div className="border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted">Problemas relatados</p>
-            <AlertTriangle className="size-5 text-danger" aria-hidden="true" />
+          <div className="border border-border bg-surface p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-muted">Problemas relatados</p>
+              <AlertTriangle className="size-5 text-danger" aria-hidden="true" />
+            </div>
+            <p className="mt-2 text-3xl font-semibold text-danger">{todayIssues.length}</p>
           </div>
-          <p className="mt-2 text-3xl font-semibold text-danger">{todayIssues.length}</p>
-        </div>
 
-        <div className="border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted">Faltam receber</p>
-            <TrendingDown className="size-5 text-warning" aria-hidden="true" />
+          <div className="border border-border bg-surface p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-muted">Faltam receber</p>
+              <TrendingDown className="size-5 text-warning" aria-hidden="true" />
+            </div>
+            <p className="mt-2 text-3xl font-semibold text-warning">{vehiclesNotReceivedToday.length}</p>
           </div>
-          <p className="mt-2 text-3xl font-semibold text-warning">{vehiclesNotReceivedToday.length}</p>
-        </div>
 
-        <div className="border border-border bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted">Total de viaturas</p>
-            <ClipboardList className="size-5 text-accent" aria-hidden="true" />
+          <div className="border border-border bg-surface p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-muted">Total de viaturas</p>
+              <ClipboardList className="size-5 text-accent" aria-hidden="true" />
+            </div>
+            <p className="mt-2 text-3xl font-semibold text-accent">{vehicles.length}</p>
           </div>
-          <p className="mt-2 text-3xl font-semibold text-accent">{vehicles.length}</p>
         </div>
-      </div>
+      </section>
 
       <div className="flex flex-col lg:flex-row gap-8">
 

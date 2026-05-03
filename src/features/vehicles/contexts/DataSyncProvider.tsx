@@ -6,7 +6,15 @@ import { checkIntakesSize, importVehicleIntakesData } from '../services/sync/int
 import { checkMaintenanceSize, importVehicleMaintenanceData } from '../services/sync/maintenancesSyncService'
 import { checkVehiclesSize, importVehiclesData } from '../services/sync/vehiclesSyncService'
 
-const SYNC_INTERVAL = 5 * 60 * 1000 // 5 minutes
+/**
+ * Default polling interval used when no user-defined sync interval is stored.
+ */
+const DEFAULT_SYNC_INTERVAL = 5 * 60 * 1000 // 5 minutes
+
+/**
+ * Generates a localStorage key for a specific sync type interval.
+ */
+const syncIntervalKey = (type: string) => `2bbm_sync_interval_${type}`
 
 interface SyncConfig {
   type: SyncType
@@ -15,6 +23,12 @@ interface SyncConfig {
   storageKey: string
 }
 
+/**
+ * Configuration for each sync type used by the provider.
+ *
+ * Defines the type, change detection function, data import function,
+ * and the storage key used for last sync timestamp persistence.
+ */
 const SYNC_CONFIGS: SyncConfig[] = [
   {
     type: 'intakes',
@@ -46,10 +60,22 @@ const SYNC_CONFIGS: SyncConfig[] = [
  * @returns Provider component
  */
 export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
+  const readSavedInterval = (type: SyncType) => {
+    const savedValue = localStorage.getItem(syncIntervalKey(type))
+    const parsed = Number(savedValue)
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SYNC_INTERVAL
+  }
+
+  const [syncIntervals, setSyncIntervals] = useState<Record<SyncType, number>>({
+    intakes: readSavedInterval('intakes'),
+    maintenance: readSavedInterval('maintenance'),
+    vehicles: readSavedInterval('vehicles'),
+  })
+
   const [syncStatus, setSyncStatus] = useState<Record<SyncType, SyncStatus>>({
-    intakes: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
-    maintenance: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
-    vehicles: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
+    intakes: { lastSyncTime: null, timeUntilNextSync: syncIntervals.intakes, isLoading: false },
+    maintenance: { lastSyncTime: null, timeUntilNextSync: syncIntervals.maintenance, isLoading: false },
+    vehicles: { lastSyncTime: null, timeUntilNextSync: syncIntervals.vehicles, isLoading: false },
   })
 
   const isRefreshing = useRef<Partial<Record<SyncType, boolean>>>({})
@@ -57,9 +83,9 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
   // Initialize sync times from localStorage
   useEffect(() => {
     const initialized: Record<SyncType, SyncStatus> = {
-      intakes: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
-      maintenance: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
-      vehicles: { lastSyncTime: null, timeUntilNextSync: SYNC_INTERVAL, isLoading: false },
+      intakes: { lastSyncTime: null, timeUntilNextSync: DEFAULT_SYNC_INTERVAL, isLoading: false },
+      maintenance: { lastSyncTime: null, timeUntilNextSync: DEFAULT_SYNC_INTERVAL, isLoading: false },
+      vehicles: { lastSyncTime: null, timeUntilNextSync: DEFAULT_SYNC_INTERVAL, isLoading: false },
     }
 
     SYNC_CONFIGS.forEach((config) => {
@@ -72,7 +98,13 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
     setSyncStatus(initialized)
   }, [])
 
-  // Update countdown timers
+  // Persist sync interval and update countdown timers.
+  useEffect(() => {
+    Object.entries(syncIntervals).forEach(([type, interval]) => {
+      localStorage.setItem(syncIntervalKey(type), String(interval))
+    })
+  }, [syncIntervals])
+
   useEffect(() => {
     const updateCountdowns = () => {
       setSyncStatus((prev) => {
@@ -82,9 +114,10 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
           const type = typeKey as SyncType
           const status = updated[type]
           const baseTime = status.lastSyncTime || Date.now()
+          const interval = syncIntervals[type]
 
           const elapsed = Date.now() - baseTime
-          const remaining = Math.max(0, SYNC_INTERVAL - elapsed)
+          const remaining = Math.max(0, interval - elapsed)
 
           updated[type] = {
             ...status,
@@ -99,7 +132,7 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
     updateCountdowns()
     const interval = setInterval(updateCountdowns, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [syncIntervals])
 
   // Perform sync for a specific type
   const performSync = useCallback(async (config: SyncConfig) => {
@@ -129,7 +162,7 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         [config.type]: {
           lastSyncTime: newTime,
-          timeUntilNextSync: SYNC_INTERVAL,
+          timeUntilNextSync: syncIntervals[config.type],
           isLoading: false,
         },
       }))
@@ -145,7 +178,7 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       isRefreshing.current[config.type] = false
     }
-  }, [])
+  }, [syncIntervals])
 
   // Setup polling for each sync type
   useEffect(() => {
@@ -154,13 +187,13 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
       performSync(config)
 
       // Periodic sync
-      return setInterval(() => performSync(config), SYNC_INTERVAL)
+      return setInterval(() => performSync(config), syncIntervals[config.type])
     })
 
     return () => {
       intervals.forEach((interval) => clearInterval(interval))
     }
-  }, [performSync])
+  }, [performSync, syncIntervals])
 
   // Listen for manual sync events from UI components
   useEffect(() => {
@@ -200,8 +233,22 @@ export const DataSyncProvider = ({ children }: { children: ReactNode }) => {
     [performSync]
   )
 
+  const setSyncInterval = useCallback((type: SyncType, interval: number) => {
+    setSyncIntervals((current) => ({
+      ...current,
+      [type]: interval,
+    }))
+  }, [])
+
   return (
-    <DataSyncContext.Provider value={{ syncStatus, refreshSync }}>
+    <DataSyncContext.Provider
+      value={{
+        syncStatus,
+        refreshSync,
+        syncIntervals,
+        setSyncInterval,
+      }}
+    >
       {children}
     </DataSyncContext.Provider>
   )

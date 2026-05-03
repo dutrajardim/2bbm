@@ -11,6 +11,8 @@ export interface SyncStatus {
 export interface DataSyncContextValue {
   syncStatus: Record<SyncType, SyncStatus>
   refreshSync: (type: SyncType) => Promise<void>
+  syncIntervals: Record<SyncType, number>
+  setSyncInterval: (type: SyncType, interval: number) => void
 }
 
 /**
@@ -37,4 +39,19 @@ export const useSyncStatus = (type: SyncType) => {
     ...context.syncStatus[type],
     refreshSync: () => context.refreshSync(type),
   }
+}
+
+/**
+ * Hook to access generic data sync settings and configuration.
+ *
+ * @returns Data sync context including interval settings.
+ */
+export const useDataSync = () => {
+  const context = useContext(DataSyncContext)
+
+  if (!context) {
+    throw new Error(`useDataSync must be used within DataSyncProvider`)
+  }
+
+  return context
 }

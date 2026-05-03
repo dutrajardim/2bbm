@@ -7,11 +7,22 @@ import { v4 as uuid } from "uuid";
  * URL for the published Google Sheets CSV export that contains the latest vehicles records.
  */
 
+/**
+ * URL for the published Google Sheets CSV export that contains the latest vehicles records.
+ */
 const VEHICLES_URL =
   'https://docs.google.com/spreadsheets/d/1y5GyOpMPrN0tQ48FFZ32hMkjhWc-2XmD0GWlV9EUELo/export?format=csv&gid=0'
 
 
 
+/**
+ * Checks whether the remote vehicles CSV source has changed since the last import.
+ *
+ * This is done via a HEAD request to compare the Content-Length header against
+ * the previously stored size value.
+ *
+ * @returns `true` when the source has changed or there is no saved size; otherwise `false`.
+ */
 export const checkVehiclesSize = async (): Promise<boolean> => {
   const res = await fetch(VEHICLES_URL, { method: 'HEAD' })
   const size = res.headers.get('Content-Length')
@@ -28,6 +39,12 @@ export const checkVehiclesSize = async (): Promise<boolean> => {
   return false
 }
 
+/**
+ * Imports the latest vehicles data from the published Google Sheets CSV export.
+ *
+ * Existing vehicle records are cleared before parsing and storing each row from
+ * the downloaded CSV.
+ */
 export const importVehiclesData = async () => {
   const response = await fetch(VEHICLES_URL)
   const csv = await response.text()
