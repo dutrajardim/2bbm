@@ -1,16 +1,17 @@
-import { usePolling } from "../../../helpers/hooks/usePolling"
-
 import Papa from "papaparse"
-import { db } from "../../../db"
-import { parseBRDateToTimestamp, parseVehicle } from "../../../helpers"
+import { db } from "../../../../db"
+import { parseBRDateToTimestamp, parseVehicle } from "../../../../helpers"
 
 import { v4 as uuid } from "uuid";
+
 
 /**
  * URL for the published Google Sheets CSV export that contains the latest vehicle intake records.
  */
 const VEHICLE_INTAKES_URL =
   'https://docs.google.com/spreadsheets/d/1Cxy54jbBfgDS5w2w3TkmzUWeyVs4A0JulchBAtD54dA/export?format=csv&gid=1703470295'
+
+
 
 /**
  * Checks whether the remote vehicle intake CSV source has changed since the last import.
@@ -21,7 +22,7 @@ const VEHICLE_INTAKES_URL =
  * @returns Promise resolving to true when the source has changed or no saved size exists,
  *   otherwise false.
  */
-export const hasChangedBySize = async (): Promise<boolean> => {
+export const checkIntakesSize = async (): Promise<boolean> => {
   const res = await fetch(VEHICLE_INTAKES_URL, { method: 'HEAD' })
   const size = res.headers.get('Content-Length')
 
@@ -88,23 +89,3 @@ export const importVehicleIntakesData = async () => {
   })
 }
 
-
-/**
- * Schedules periodic vehicle intake synchronization.
- *
- * Checks whether the remote spreadsheet changed and, when needed, updates the
- * local database used by query hooks.
- */
-export const useVehicleIntakesSync = () => {
-  usePolling(async () => {
-    const changed = await hasChangedBySize()
-    console.log(changed ? "Vehicle intakes have changed, syncing..." : "No changes detected in vehicle intakes.")
-
-    if (changed) {
-      await importVehicleIntakesData()
-    }
-
-    // Always dispatch event to notify that sync check completed (whether data changed or not)
-    window.dispatchEvent(new CustomEvent('vehicle-intakes-synced'))
-  }, 5 * 60 * 1000) // Every 5 minutes
-}

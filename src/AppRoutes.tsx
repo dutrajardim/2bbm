@@ -3,7 +3,7 @@ import AppShell from "./features/vehicles/components/AppShell";
 import Dashboard from "./features/vehicles/pages/Dashboard"
 import Vehicle from "./features/vehicles/pages/Vehicle";
 import DailyIntake from "./features/vehicles/pages/DailyIntake";
-import { SyncProvider } from "./features/vehicles/providers/SyncProvider";
+import { DataSyncProvider } from "./features/vehicles/contexts/DataSyncProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 /**
@@ -14,7 +14,7 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 const AppRoutes = () => {
   return (
     <ThemeProvider>
-      <SyncProvider>
+      <DataSyncProvider>
         <AppShell>
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -23,7 +23,7 @@ const AppRoutes = () => {
             <Route path="*" element={<Dashboard />} />
           </Routes>
         </AppShell>
-      </SyncProvider>
+      </DataSyncProvider>
     </ThemeProvider>
   )
 }

@@ -1,8 +1,6 @@
-import { usePolling } from "../../../helpers/hooks/usePolling"
-
 import Papa from "papaparse"
-import { db } from "../../../db"
-import { parseBRDateToTimestamp } from "../../../helpers"
+import { db } from "../../../../db"
+import { parseBRDateToTimestamp } from "../../../../helpers"
 
 import { v4 as uuid } from "uuid";
 
@@ -11,6 +9,9 @@ import { v4 as uuid } from "uuid";
  */
 const VEHICLE_MAINTENANCE_URL =
   'https://docs.google.com/spreadsheets/d/1y5GyOpMPrN0tQ48FFZ32hMkjhWc-2XmD0GWlV9EUELo/export?format=csv&gid=1046510535'
+
+
+
 
 /**
  * Checks whether the remote vehicle maintenance CSV source has changed since the last import.
@@ -21,7 +22,7 @@ const VEHICLE_MAINTENANCE_URL =
  * @returns Promise resolving to true when the source has changed or no saved size exists,
  *   otherwise false.
  */
-const hasChangedBySize = async (): Promise<boolean> => {
+export const checkMaintenanceSize = async (): Promise<boolean> => {
   const res = await fetch(VEHICLE_MAINTENANCE_URL, { method: 'HEAD' })
   const size = res.headers.get('Content-Length')
 
@@ -43,7 +44,7 @@ const hasChangedBySize = async (): Promise<boolean> => {
  * This clears the existing `vehicleMaintenances` table before parsing and inserting each
  * valid row from the downloaded CSV. Invalid records are skipped and logged.
  */
-const importVehicleMaintenancesData = async () => {
+export const importVehicleMaintenanceData = async () => {
   const response = await fetch(VEHICLE_MAINTENANCE_URL)
   const csv = await response.text()
 
@@ -70,20 +71,4 @@ const importVehicleMaintenancesData = async () => {
 
     }
   })
-}
-
-/**
- * Schedules periodic vehicle maintenance synchronization.
- *
- * Checks whether the remote spreadsheet changed and, when needed, updates the
- * local database used by the maintenance history.
- */
-export const useVehicleMaintenancesSync = () => {
-  usePolling(async () => {
-    const changed = await hasChangedBySize()
-    console.log(changed ? "Vehicle maintenances have changed, syncing..." : "No changes detected in vehicle maintenances.")
-    if (!changed) return
-
-    await importVehicleMaintenancesData()
-  }, 5 * 60 * 1000) // Every 5 minutes
 }

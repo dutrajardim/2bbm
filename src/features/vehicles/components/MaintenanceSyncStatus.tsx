@@ -3,28 +3,25 @@ import { RefreshCw } from 'lucide-react'
 import { useSyncStatus } from '../contexts/DataSyncContext'
 
 /**
- * Displays a minimal sync status indicator for intakes.
+ * Displays a minimal sync status indicator for maintenance data.
  *
  * Shows time until the next check and includes a manual refresh button.
  *
  * @returns Minimal sync status component
  */
-export const IntakeSyncStatus = () => {
-  const { timeUntilNextSync, isLoading, refreshSync } = useSyncStatus('intakes')
+export const MaintenanceSyncStatus = () => {
+  const { timeUntilNextSync, isLoading, refreshSync } = useSyncStatus('maintenance')
   const [formattedCountdown, setFormattedCountdown] = useState<string>('5:00')
 
-
-  // Format countdown timer and last sync time
+  // Format countdown timer
   useEffect(() => {
     const minutes = Math.floor(timeUntilNextSync / 60000)
     const seconds = Math.floor((timeUntilNextSync % 60000) / 1000)
     setFormattedCountdown(`${minutes}:${seconds.toString().padStart(2, '0')}`)
-
   }, [timeUntilNextSync])
 
   return (
     <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-
       {/* Countdown to next sync */}
       <div className="flex items-center gap-1.5 text-xs">
         <RefreshCw className="w-3.5 h-3.5 text-slate-500" />

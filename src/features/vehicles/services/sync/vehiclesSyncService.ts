@@ -1,13 +1,18 @@
 import Papa from "papaparse"
-import { db } from "../../../db"
+import { db } from "../../../../db"
 
 import { v4 as uuid } from "uuid";
-import { usePolling } from "../../../helpers/hooks/usePolling";
+
+/**
+ * URL for the published Google Sheets CSV export that contains the latest vehicles records.
+ */
 
 const VEHICLES_URL =
   'https://docs.google.com/spreadsheets/d/1y5GyOpMPrN0tQ48FFZ32hMkjhWc-2XmD0GWlV9EUELo/export?format=csv&gid=0'
 
-const hasChangedBySize = async (): Promise<boolean> => {
+
+
+export const checkVehiclesSize = async (): Promise<boolean> => {
   const res = await fetch(VEHICLES_URL, { method: 'HEAD' })
   const size = res.headers.get('Content-Length')
 
@@ -23,7 +28,7 @@ const hasChangedBySize = async (): Promise<boolean> => {
   return false
 }
 
-const importVehiclesData = async () => {
+export const importVehiclesData = async () => {
   const response = await fetch(VEHICLES_URL)
   const csv = await response.text()
 
@@ -48,14 +53,4 @@ const importVehiclesData = async () => {
       });
     }
   })
-}
-
-export const useVehiclesSync = (): void => {
-  usePolling(async () => {
-    const changed = await hasChangedBySize()
-    console.log(changed ? "Vehicles data have changed, syncing..." : "No changes detected in vehicles data.")
-    if (!changed) return
-
-    await importVehiclesData()
-  }, 5 * 60 * 1000) // every 5 minutes
 }
